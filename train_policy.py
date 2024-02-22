@@ -66,23 +66,25 @@ for i, policy_name in enumerate(policy_names):
     env_checker.check_env(env)
     sb3_common.env_checker.check_env(env)
     in_channels, num_actions = env.observation_space.shape[2], env.action_space.n
-    """ model = PPO("CnnPolicy", 
-                env, 
-                n_steps=2048, 
-                policy_kwargs=policy_kwargs, 
-                ent_coef=1e-3,
-                verbose=1, 
-                seed = 1231, 
-                torch_seed = 1123 + 123451*(i+1), 
-                device = "auto")   """
-    model = dqn.DQN("CnnPolicy", 
+    if algo == "dqn": 
+        model = PPO("CnnPolicy", 
                     env, 
-                    buffer_size=200_000, 
+                    n_steps=2048, 
                     policy_kwargs=policy_kwargs, 
-                    target_update_interval=50_000, 
-                    verbose=1,
+                    ent_coef=1e-3,
+                    verbose=1, 
                     seed = 1231, 
-                    torch_seed = 1123 + 123451*(i+0)) 
+                    torch_seed = 1123 + 123451*(i+1), 
+                    device = "auto")   
+    if algo == "ppo": 
+        model = dqn.DQN("CnnPolicy", 
+                        env, 
+                        buffer_size=200_000, 
+                        policy_kwargs=policy_kwargs, 
+                        target_update_interval=50_000, 
+                        verbose=1,
+                        seed = 1231, 
+                        torch_seed = 1123 + 123451*(i+0)) 
     model.learn(total_timesteps=total_timesteps, callback=eval_callback, progress_bar=True)
     print("Training completed.")
     model.save(log_path + policy_name + "_" + env_name + "_" + algo)
