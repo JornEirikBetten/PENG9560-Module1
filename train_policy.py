@@ -74,7 +74,7 @@ for i, policy_name in enumerate(policy_names):
                     ent_coef=1e-3,
                     verbose=1, 
                     seed = 1231, 
-                    torch_seed = 1123 + 123451*(i+1), 
+                    torch_seed = 1123 + 123451*(i+0), 
                     device = "auto")   
     if algo == "ppo": 
         model = dqn.DQN("CnnPolicy", 
