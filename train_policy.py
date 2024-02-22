@@ -13,13 +13,17 @@ import numpy as np
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import EvalCallback
-
+import sys 
 from stable_baselines3.common.logger import configure
 import src as src 
 
+environment = sys.argv[1]
+algorithm = sys.argv[2]
+
+print("Training agents in " + environment + " using the " + algorithm + " algorithm.")
 # Set environment and learning algorithm
-environment = "MinAtar/Freeway-v1" # "MinAtar/Seaquest-v1"
-algorithm = "dqn"
+#environment = "MinAtar/Freeway-v1" # "MinAtar/Seaquest-v1"
+#algorithm = "dqn"
 policy_kwargs = dict(
     features_extractor_class=src.FreewayCNN,
     features_extractor_kwargs=dict(features_dim=128),
@@ -42,7 +46,7 @@ if algorithm == "ppo":
 
 
 
-policy_names =["alpha", "beta", "gamma"]
+policy_names =["alpha", "beta", "gamma", "delta", "epsilon"]
 
 
 
@@ -83,5 +87,4 @@ for i, policy_name in enumerate(policy_names):
     print("Training completed.")
     model.save(log_path + policy_name + "_" + env_name + "_" + algo)
 
-    del model # remove to demonstrate saving and loading
 
