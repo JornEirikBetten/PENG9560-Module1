@@ -19,8 +19,6 @@ def moving_average(returns, n):
 
 
 def lineplot_with_stds(x, y, y_stds, label, color, xlabel, ylabel, figname):
-    print(np.max(y_stds[100:-1]))
-    print(np.max(y[100:-1]))
     fig = plt.figure() 
     ax = plt.gca() 
     ax.spines["top"].set_visible(False)
@@ -34,4 +32,24 @@ def lineplot_with_stds(x, y, y_stds, label, color, xlabel, ylabel, figname):
     ax.grid(True)
     plt.savefig(figname, format = "pdf", bbox_inches = "tight")
     plt.close() 
+    
+
+def multiple_lineplots_with_stds(xs, ys, y_stds, labels, colors, xlabel, ylabel, figname, xticks = None):
+    fig = plt.figure() 
+    ax = plt.gca() 
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel) 
+    plt.ylim(0, np.max(ys[0][100:-1]) + np.max(y_stds[0][100:-1]))
+    for i, y in enumerate(ys): 
+        plt.plot(xs[i], y, color = colors[i], linestyle = "solid", label = labels[i], alpha = 0.5)
+        ax.fill_between(xs[i], y - 1.96 * y_stds[i], y + 1.96 * y_stds[i], color = colors[i], alpha = 0.0)
+    if xticks != None: 
+        plt.xticks(xticks[0], xticks[1])
+    plt.legend() 
+    ax.grid(True)
+    plt.savefig(figname, format = "pdf", bbox_inches = "tight")
+    plt.close() 
+    
     
