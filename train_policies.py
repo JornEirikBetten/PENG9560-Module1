@@ -19,8 +19,6 @@ import src as src
 
 environment = sys.argv[1]
 algorithm = sys.argv[2]
-policy_name = sys.argv[3]
-torch_seed = sys.argv[4]
 
 print("Training agents in " + environment + " using the " + algorithm + " algorithm.")
 # Set environment and learning algorithm
@@ -48,6 +46,7 @@ if algorithm == "ppo":
 
 
 
+policy_names =["alpha", "beta", "gamma", "delta", "epsilon"]
 
 
 
@@ -57,37 +56,37 @@ path = os.getcwd()
 log_path = path + "/training_runs/" + env_name + "/" + algo + "/"
 
 total_timesteps = 10_000_000
-
-save_path = log_path + policy_name + "/"
-eval_callback = EvalCallback(Monitor(eval_env), best_model_save_path=save_path,
-                            log_path=save_path, eval_freq=100_000,
-                            deterministic=True, render=False)
-env = gym.make(environment)
-env = Monitor(env, filename=save_path)
-env_checker.check_env(env)
-sb3_common.env_checker.check_env(env)
-in_channels, num_actions = env.observation_space.shape[2], env.action_space.n
-if algo == "ppo": 
-    model = PPO("CnnPolicy", 
-                env, 
-                n_steps=2048, 
-                policy_kwargs=policy_kwargs, 
-                ent_coef=1e-3,
-                verbose=1, 
-                seed = 1231, 
-                torch_seed = torch_seed, 
-                device = "auto")   
-if algo == "dqn": 
-    model = dqn.DQN("CnnPolicy", 
+for i, policy_name in enumerate(policy_names): 
+    save_path = log_path + policy_name + "/"
+    eval_callback = EvalCallback(Monitor(eval_env), best_model_save_path=save_path,
+                             log_path=save_path, eval_freq=100_000,
+                             deterministic=True, render=False)
+    env = gym.make(environment)
+    env = Monitor(env, filename=save_path)
+    env_checker.check_env(env)
+    sb3_common.env_checker.check_env(env)
+    in_channels, num_actions = env.observation_space.shape[2], env.action_space.n
+    if algo == "dqn": 
+        model = PPO("CnnPolicy", 
                     env, 
-                    buffer_size=200_000, 
+                    n_steps=2048, 
                     policy_kwargs=policy_kwargs, 
-                    target_update_interval=50_000, 
-                    verbose=1,
+                    ent_coef=1e-3,
+                    verbose=1, 
                     seed = 1231, 
-                    torch_seed = torch_seed) 
-model.learn(total_timesteps=total_timesteps, callback=eval_callback, progress_bar=True)
-print("Training completed.")
-model.save(log_path + policy_name + "_" + env_name + "_" + algo)
+                    torch_seed = 1123 + 123451*(i+0), 
+                    device = "auto")   
+    if algo == "ppo": 
+        model = dqn.DQN("CnnPolicy", 
+                        env, 
+                        buffer_size=200_000, 
+                        policy_kwargs=policy_kwargs, 
+                        target_update_interval=50_000, 
+                        verbose=1,
+                        seed = 1231, 
+                        torch_seed = 1123 + 123451*(i+0)) 
+    model.learn(total_timesteps=total_timesteps, callback=eval_callback, progress_bar=True)
+    print("Training completed.")
+    model.save(log_path + policy_name + "_" + env_name + "_" + algo)
 
 
