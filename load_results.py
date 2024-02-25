@@ -271,5 +271,6 @@ src.multiple_lineplots_with_stds(xs,
 #seaquest_plotter_dqn(100)
 #seaquest_plotter_ppo(100)
 #freeway_plotter_dqn(100)
+freeway_plotter_ppo(100)
 doorkey_plotter_dqn(100)
 doorkey_plotter_ppo(100)
